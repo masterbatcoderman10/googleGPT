@@ -5,6 +5,9 @@ import json
 import pprint
 import requests
 from bs4 import BeautifulSoup
+import tiktoken
+from newspaper import Article
+
 dotenv.load_dotenv()
 
 serp_api_key = os.getenv("SERPER_API_KEY")
@@ -33,6 +36,7 @@ def search_results(query):
 
 # pprint.pprint(search_results('Apple latest product'))
 
+
 def extract_webpage_content(url):
     try:
         # Make an HTTP request to the webpage
@@ -53,4 +57,20 @@ def extract_webpage_content(url):
 
     return text_content
 
-pprint.pprint(extract_webpage_content("https://www.zdnet.com/article/every-product-apple-announced-this-week-iphone-15-pro-apple-watch-series-9-airpods/"))
+def extract_webpage_content_efficient(url):
+
+    article = Article(url)
+    article.download()
+    article.parse()
+
+    main_text = article.text
+    return main_text
+
+
+page_content =extract_webpage_content_efficient(
+    "https://www.zdnet.com/article/every-product-apple-announced-this-week-iphone-15-pro-apple-watch-series-9-airpods/")
+
+# encoding = tiktoken.encoding_for_model('gpt-3.5-turbo')
+# print(len(encoding.encode(page_content)))
+
+print(len(page_content))
