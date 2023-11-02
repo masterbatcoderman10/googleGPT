@@ -29,4 +29,4 @@ def search_results(query):
 
     return links
 
-pprint.pprint(search_results('Apple latest product'))
+# pprint.pprint(search_results('Apple latest product'))
