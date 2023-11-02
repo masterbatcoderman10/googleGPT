@@ -34,4 +34,4 @@ def get_query(input_query):
     return content
 
 
-pprint.pprint(get_query('apples latest product'))
+# pprint.pprint(get_query('what is apple latest product?'))
