@@ -39,6 +39,23 @@ def get_query(input_query):
 
 def decide_leads(links, query):
 
+    """
+    Determines the most suitable links for a given query using the OpenAI GPT-3 model.
+
+    This function sends a system message and a user message to the GPT-3 model. 
+    The system message instructs the model to evaluate the provided links and determine which ones 
+    are the most suitable for finding information related to the given query. 
+    The user message contains the query and the links. 
+    The model's response is then parsed and returned as a dictionary.
+
+    Args:
+        links (list): The list of links to be evaluated.
+        query (str): The query to find information for.
+
+    Returns:
+        dict: A dictionary containing the most suitable links. The key is 'link' and the value is the selected link.
+    """
+
     sys_message = {
         'role': 'system',
         'content': """
@@ -71,18 +88,32 @@ def decide_leads(links, query):
 
 
 def summarize(query, webpage):
+    """
+    Summarizes the content of a webpage based on a user's query using the OpenAI GPT-3 model.
 
+    This function sends a system message and a user message to the GPT-3 model. 
+    The system message instructs the model to summarize the content of the provided webpage based on the user's query. 
+    The user message contains the query and the webpage content. 
+    The model's response is then parsed and returned as a dictionary.
+
+    Args:
+        query (str): The user's query.
+        webpage (str): The content of the webpage to be summarized.
+
+    Returns:
+        dict: A dictionary containing the summary. The key is 'summary' and the value is the summary of the webpage content.
+    """
     sys_message = {
-    'role': 'system',
-    'content': """
-        Your task is to summarize the content of the provided webpage based on the user's query. 
-        The summary should be clear, well-explained, and original - do not copy text directly from the webpage. 
-        The summary must be returned as a JSON object with the key "summary". 
-        Here's the format: {"summary": "your summary here"}.
-        If the information needed to answer the query isn't available on the provided webpage, 
-        return a JSON object with the value "N/A" for the summary key, like so: {"summary": "N/A"}.
-        """
-}
+        'role': 'system',
+        'content': """
+            Your task is to summarize the content of the provided webpage based on the user's query. 
+            The summary should be clear, well-explained, and original - do not copy text directly from the webpage. 
+            The summary must be returned as a JSON object with the key "summary". 
+            Here's the format: {"summary": "your summary here"}.
+            If the information needed to answer the query isn't available on the provided webpage, 
+            return a JSON object with the value "N/A" for the summary key, like so: {"summary": "N/A"}.
+            """
+    }
 
     enc_webpage = encoding.encode(webpage)
     #truncate the encoding to 2048 tokens

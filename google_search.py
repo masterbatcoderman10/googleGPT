@@ -15,16 +15,23 @@ serp_api_key = os.getenv("SERPER_API_KEY")
 
 
 def search_results(payload):
+    """
+    Fetches search results from a Google Search API.
+
+    This function sends a POST request to the Google Search API with a given payload. 
+    It then parses the response and extracts the title and link of each organic search result.
+
+    Args:
+        payload (dict): The payload to send in the POST request. This should contain the search parameters.
+
+    Returns:
+        dict: A dictionary where the keys are the titles of the search results and the values are the corresponding links.
+    """
     url = "https://google.serper.dev/search"
     headers = {
         'X-API-KEY': serp_api_key,
         'Content-Type': 'application/json'
     }
-    # payload = {
-    #     "q": query,
-    #     "tbs": "qdr:w",
-    #     "num": 10,
-    # }
     response = requests.post(url, json=payload, headers=headers)
     data = response.json()
     links = {org['title']: org['link'] for org in data['organic']}
@@ -55,7 +62,18 @@ def search_results(payload):
 #     return text_content
 
 def extract_webpage_content_efficient(url):
+    """
+    Extracts the main content from a webpage.
 
+    This function uses the Newspaper3k library to download and parse the webpage. 
+    It then extracts the main text content from the parsed webpage.
+
+    Args:
+        url (str): The URL of the webpage to extract content from.
+
+    Returns:
+        str: The main text content of the webpage.
+    """
     article = Article(url)
     article.download()
     article.parse()
