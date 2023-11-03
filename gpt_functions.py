@@ -140,3 +140,63 @@ def summarize(query, webpage):
 # With the EU imposing a law for electronics makers to adopt USB-C by 2024, the new iPhones finally support charging and data transferring via USB-C, becoming Apple's latest major product to make the switch to the more universal power format.
 
 # The phones are available for preorder now in black titanium, white titanium, blue titanium, and natural titanium finishes. The iPhone 15 Pro starts at $999, and the iPhone 15 Pro Max starts at $1,199."""))
+
+def craft_payload(query):
+    sys_message = {
+        'role': 'system',
+        'content': """
+            You are a sophisticated digital surfer with a knack for crafting precise Google search queries.
+            Based on the input query, your task is to formulate a refined search query by selecting the most 
+            relevant advanced search parameters. Your goal is to return a payload dictionary optimized for 
+            an accurate and efficient search experience. Analyze the input query, deduce the intent, and 
+            choose the search parameters wisely to hone in on the most pertinent information.
+
+            The payload should be returned as a dictionary with the following keys:
+            - 'q': The refined query.
+            - 'num': The number of results to retrieve (default to 10).
+            - 'tbs': Time-based search parameter (e.g., 'qdr:w' for past week), if relevant.
+            - 'as_filetype': Filetype filter (e.g., 'pdf'), if relevant.
+            - 'as_sitesearch': Specific domain to restrict the search to (e.g., 'example.com'), if relevant.
+            - 'cd_min' : the start data
+            - 'cd_max' : the end date
+
+            Here's the expected format:
+            {
+                "q": 'refined query here',
+                "num": 10,
+                "tbs": 'time-based parameter here',
+                "cd_min": 'start date here',
+                "cd_max": 'end date here',
+                "as_filetype": 'filetype here',
+                "as_sitesearch": 'domain here'
+            }
+
+            Omit any keys that are not relevant to the refined search query.
+        """
+    }
+
+    user_message = {
+        'role': 'user',
+        'content': query
+    }
+
+    messages = [sys_message, user_message]
+
+    # Set up the input for the OpenAI call
+
+    response = openai.ChatCompletion.create(
+        model='gpt-4',
+        temperature=0.0,
+        messages=messages,
+    )
+    
+    # Extract the payload from the response
+    payload = response['choices'][0]['message']['content']
+    # Turn the payload string into a JSON object
+    print(payload)
+    payload = json.loads(payload)
+
+    return payload
+
+
+
