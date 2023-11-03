@@ -39,4 +39,4 @@ class GoogleGPT:
         pprint.pprint(self.summaries)
 
 gGPT = GoogleGPT()
-gGPT.search('who is the player with the second most balon dor wins')
+gGPT.search('Is neymar injured?')

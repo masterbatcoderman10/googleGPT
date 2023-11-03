@@ -78,6 +78,7 @@ def summarize(query, webpage):
         Strictly return the summary as a JSON object with the following key: 
         'summary' in double quotes.
         RETURN A JSON OBJECT WITH THE KEY SUMMARY
+        If the answer can not be deterined from the provided webpage, return the value "N/A" as the summary.
         """
     }
 
