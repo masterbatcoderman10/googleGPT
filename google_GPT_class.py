@@ -24,6 +24,7 @@ class GoogleGPT:
     def search(self, query):
         self.base_query = query
         self.query = get_query(query)['optimized_search_query']
+        print(self.query)
         titles_and_links = search_results(self.query)
         selected_link = decide_leads(titles_and_links, self.query)['link']
         self.links.append(selected_link)
@@ -38,4 +39,4 @@ class GoogleGPT:
         pprint.pprint(self.summaries)
 
 gGPT = GoogleGPT()
-gGPT.search('what is the latest apple product?')
+gGPT.search('who is the player with the second most balon dor wins')

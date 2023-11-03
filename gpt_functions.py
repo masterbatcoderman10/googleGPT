@@ -4,9 +4,11 @@ import openai
 import pprint
 from dotenv import load_dotenv
 from google_search import *
+import tiktoken
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
+encoding = tiktoken.encoding_for_model('gpt-3.5-turbo')
 
 
 def get_query(input_query):
@@ -16,7 +18,7 @@ def get_query(input_query):
         # multi-line string
         "content": """You are a subsystem of a larger
         system that is used to search the web. Your role is to
-        return the most relevant query that can be used to browse
+        return the most relevant and complete query that can be used to browse
         the web based on the input query. STRICTLY return the query as a dictionary
         with the following key: optimized_search_query.    
         """
@@ -24,7 +26,7 @@ def get_query(input_query):
 
     response = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
-        temperature=0.5,
+        temperature=0.0,
         messages=[query_message, {"role": 'user', "content": input_query}],
     )
 
@@ -56,7 +58,7 @@ def decide_leads(links, query):
 
     response = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
-        temperature=0.5,
+        temperature=0.0,
         messages=messages,
     )
 
@@ -70,8 +72,19 @@ def summarize(query, webpage):
 
     sys_message = {
         'role': 'system',
-        'content': 'Your job is to summarize the webpage content based on the query asked by the user. Strictly return the summary as a JSON with the following key ensuring the summary answers the question concisely and accurately: summary in double quotes. Make sure the answer returned isn\'t needlessly long.'
+        'content': """
+        Your task is to summarize the webpage content based on the query asked by the user. 
+        Make sure the answer returned isn't needlessly long and make sure it is well explained and not copied.
+        Strictly return the summary as a JSON object with the following key: 
+        'summary' in double quotes.
+        RETURN A JSON OBJECT WITH THE KEY SUMMARY
+        """
     }
+
+    enc_webpage = encoding.encode(webpage)
+    #truncate the encoding to 2048 tokens
+    enc_webpage = enc_webpage[:2048]
+    webpage = encoding.decode(enc_webpage)
 
     user_message = {
         'role': 'user',
@@ -82,25 +95,26 @@ def summarize(query, webpage):
 
     response = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
-        temperature=0.5,
+        temperature=0.0,
         messages=messages,
     )
 
     content = response['choices'][0]['message']['content']
+    print(content)
     content = json.loads(content)
     return content
 
 
-test_links = {"Apple Event: what's happened in 2023 and what could be next - TechRadar": 'https://www.techradar.com/news/new-apple-event',
- 'Apple shows off MacBooks with M3 chip at Scary Fast event - Yahoo Finance': 'https://finance.yahoo.com/video/apple-shows-off-macbooks-m3-140203045.html',
- 'Apple unveils new MacBook Pro featuring M3 chips': 'https://www.apple.com/newsroom/2023/10/apple-unveils-new-macbook-pro-featuring-m3-chips/',
- "Apple's 'Scary Fast' Mac event: all the news from Apple's online keynote - The Verge": 'https://www.theverge.com/2023/10/30/23933672/apple-event-mac-october-news-updates-products-scary-fast',
- 'Apple: News, Reviews, Guides, and More - PCMag': 'https://www.pcmag.com/series/apple',
- 'Every new Apple product coming in 2024 - Macworld': 'https://www.macworld.com/article/671090/new-apple-products.html',
- 'The new MacBook Pro | Apple - YouTube': 'https://youtube.com/watch?v=0pg_Y41waaE',
- 'Upcoming Apple Products Guide: Everything We Expect to See in 2023 and Beyond': 'https://www.macrumors.com/guide/upcoming-apple-products/'}
+# test_links = {"Apple Event: what's happened in 2023 and what could be next - TechRadar": 'https://www.techradar.com/news/new-apple-event',
+#  'Apple shows off MacBooks with M3 chip at Scary Fast event - Yahoo Finance': 'https://finance.yahoo.com/video/apple-shows-off-macbooks-m3-140203045.html',
+#  'Apple unveils new MacBook Pro featuring M3 chips': 'https://www.apple.com/newsroom/2023/10/apple-unveils-new-macbook-pro-featuring-m3-chips/',
+#  "Apple's 'Scary Fast' Mac event: all the news from Apple's online keynote - The Verge": 'https://www.theverge.com/2023/10/30/23933672/apple-event-mac-october-news-updates-products-scary-fast',
+#  'Apple: News, Reviews, Guides, and More - PCMag': 'https://www.pcmag.com/series/apple',
+#  'Every new Apple product coming in 2024 - Macworld': 'https://www.macworld.com/article/671090/new-apple-products.html',
+#  'The new MacBook Pro | Apple - YouTube': 'https://youtube.com/watch?v=0pg_Y41waaE',
+#  'Upcoming Apple Products Guide: Everything We Expect to See in 2023 and Beyond': 'https://www.macrumors.com/guide/upcoming-apple-products/'}
 
-pprint.pprint(decide_leads(test_links, 'Apple latest product released'))
+# pprint.pprint(decide_leads(test_links, 'Apple latest product released'))
 
 # pprint.pprint(summarize('what is apple latest product that is released?', """The iPhone 15 Pro and iPhone 15 Pro Max were this year's headlining act, with new and improved form factors, updated processors, and the latest advancements in the iPhone camera.
 
