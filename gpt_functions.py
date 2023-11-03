@@ -14,19 +14,19 @@ encoding = tiktoken.encoding_for_model('gpt-3.5-turbo')
 def get_query(input_query):
 
     query_message = {
-        "role": 'system',
-        # multi-line string
-        "content": """You are a subsystem of a larger
-        system that is used to search the web. Your role is to
-        return the most relevant and complete query that can be used to browse
-        the web based on the input query. STRICTLY return the query as a dictionary
-        with the following key: optimized_search_query.    
-        """
+    "role": 'system',
+    "content": """
+        You are a subsystem within a larger system designed to search the web.
+        Your role is to craft the most relevant and comprehensive query based on the input provided.
+        Return the query STRICTLY as a dictionary with the key: 'optimized_search_query'.
+        Here's the format: {"optimized_search_query": "your refined query here"}.
+    """
     }
+
 
     response = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
-        temperature=0.0,
+        temperature=0.9,
         messages=[query_message, {"role": 'user', "content": input_query}],
     )
 
@@ -71,16 +71,16 @@ def decide_leads(links, query):
 def summarize(query, webpage):
 
     sys_message = {
-        'role': 'system',
-        'content': """
-        Your task is to summarize the webpage content based on the query asked by the user. 
-        Make sure the answer returned isn't needlessly long and make sure it is well explained and not copied.
-        Strictly return the summary as a JSON object with the following key: 
-        'summary' in double quotes.
-        RETURN A JSON OBJECT WITH THE KEY SUMMARY
-        If the answer can not be deterined from the provided webpage, return the value "N/A" as the summary.
+    'role': 'system',
+    'content': """
+        Your task is to summarize the content of the provided webpage based on the user's query. 
+        The summary should be clear, well-explained, and original - do not copy text directly from the webpage. 
+        The summary must be returned as a JSON object with the key "summary". 
+        Here's the format: {"summary": "your summary here"}.
+        If the information needed to answer the query isn't available on the provided webpage, 
+        return a JSON object with the value "N/A" for the summary key, like so: {"summary": "N/A"}.
         """
-    }
+}
 
     enc_webpage = encoding.encode(webpage)
     #truncate the encoding to 2048 tokens

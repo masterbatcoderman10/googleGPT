@@ -39,4 +39,4 @@ class GoogleGPT:
         pprint.pprint(self.summaries)
 
 gGPT = GoogleGPT()
-gGPT.search('Is neymar injured?')
+gGPT.search('how is offside determined in UCL')
