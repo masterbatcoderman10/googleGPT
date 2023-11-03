@@ -23,9 +23,10 @@ class GoogleGPT:
 
     def search(self, query):
         self.base_query = query
-        self.query = get_query(query)['optimized_search_query']
-        print(self.query)
-        titles_and_links = search_results(self.query)
+        payload = craft_payload(query)
+        self.query = payload['q']
+        pprint.pprint(payload)
+        titles_and_links = search_results(payload=payload)
         selected_link = decide_leads(titles_and_links, self.query)['link']
         self.links.append(selected_link)
         self.titles.append(list(titles_and_links.keys())[list(
@@ -39,4 +40,4 @@ class GoogleGPT:
         pprint.pprint(self.summaries)
 
 gGPT = GoogleGPT()
-gGPT.search('how is offside determined in UCL')
+gGPT.search('who has the most wickets in the recent world cup?')

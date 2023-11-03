@@ -14,17 +14,17 @@ serp_api_key = os.getenv("SERPER_API_KEY")
 
 
 
-def search_results(query):
+def search_results(payload):
     url = "https://google.serper.dev/search"
     headers = {
         'X-API-KEY': serp_api_key,
         'Content-Type': 'application/json'
     }
-    payload = {
-        "q": query,
-        "tbs": "qdr:w",
-        "num": 10,
-    }
+    # payload = {
+    #     "q": query,
+    #     "tbs": "qdr:w",
+    #     "num": 10,
+    # }
     response = requests.post(url, json=payload, headers=headers)
     data = response.json()
     links = {org['title']: org['link'] for org in data['organic']}

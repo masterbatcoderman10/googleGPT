@@ -101,7 +101,6 @@ def summarize(query, webpage):
     )
 
     content = response['choices'][0]['message']['content']
-    print(content)
     content = json.loads(content)
     return content
 
@@ -193,7 +192,6 @@ def craft_payload(query):
     # Extract the payload from the response
     payload = response['choices'][0]['message']['content']
     # Turn the payload string into a JSON object
-    print(payload)
     payload = json.loads(payload)
 
     return payload
