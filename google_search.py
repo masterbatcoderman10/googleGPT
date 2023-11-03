@@ -13,26 +13,23 @@ dotenv.load_dotenv()
 serp_api_key = os.getenv("SERPER_API_KEY")
 
 
-def search_results(query):
 
-    conn = http.client.HTTPSConnection("google.serper.dev")
-    payload = json.dumps({
-        "q": query,
-        "num": 10,
-    })
+def search_results(query):
+    url = "https://google.serper.dev/search"
     headers = {
         'X-API-KEY': serp_api_key,
         'Content-Type': 'application/json'
     }
-    conn.request("POST", "/search", payload, headers)
-    res = conn.getresponse()
-    data = res.read()
-    # load data into json
-    data = json.loads(data)
-    # pretty print json
+    payload = {
+        "q": query,
+        "tbs": "qdr:w",
+        "num": 10,
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    data = response.json()
     links = {org['title']: org['link'] for org in data['organic']}
-
     return links
+
 
 # pprint.pprint(search_results('Apple latest product'))
 
@@ -67,8 +64,8 @@ def extract_webpage_content_efficient(url):
     return main_text
 
 
-page_content =extract_webpage_content_efficient(
-    "https://www.zdnet.com/article/every-product-apple-announced-this-week-iphone-15-pro-apple-watch-series-9-airpods/")
+# page_content =extract_webpage_content_efficient(
+#     "https://www.zdnet.com/article/every-product-apple-announced-this-week-iphone-15-pro-apple-watch-series-9-airpods/")
 
 # encoding = tiktoken.encoding_for_model('gpt-3.5-turbo')
 # print(len(encoding.encode(page_content)))
