@@ -40,4 +40,4 @@ class GoogleGPT:
         pprint.pprint(self.summaries)
 
 gGPT = GoogleGPT()
-gGPT.search('who has the most wickets in the recent world cup?')
+gGPT.search('how many people have died in palestine from the latest conflict')
